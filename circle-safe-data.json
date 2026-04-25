@@ -1,0 +1,16 @@
+{
+  "latestLocation": {
+    "latitude": 18.97134690085837,
+    "longitude": 72.82531690236053,
+    "accuracy": 128,
+    "updatedAt": "2026-04-22T17:07:21.646Z"
+  },
+  "contacts": [
+    {
+      "name": "Emergency contact",
+      "route": "9930679739"
+    }
+  ],
+  "lastCheckin": "",
+  "activeAlert": "SOS alert prepared"
+}

@@ -1,0 +1,1 @@
+window.CIRCLESAFE_API_BASE = "";

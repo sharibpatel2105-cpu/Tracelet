@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: circlesafe
+    runtime: python
+    buildCommand: ""
+    startCommand: python server.py
+    envVars:
+      - key: CIRCLESAFE_PARENT_PASSWORD
+        sync: false
+      - key: CIRCLESAFE_CHILD_PASSWORD
+        sync: false

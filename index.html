@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CircleSafe</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar" aria-label="App header">
+        <div>
+          <p class="eyebrow">Family safety</p>
+          <h1>CircleSafe</h1>
+        </div>
+        <button class="secondary hidden" id="logoutButton">Log out</button>
+      </section>
+
+      <section class="notice">
+        <strong>Visible sharing only.</strong>
+        Child location sharing starts only after the child logs in, taps share, and grants browser permission.
+      </section>
+
+      <section class="login-panel" id="loginPanel">
+        <div>
+          <p class="eyebrow">Sign in</p>
+          <h2>Choose the right family view</h2>
+          <p class="login-copy">Demo accounts are included so you can test the child and parent experiences separately.</p>
+        </div>
+        <form class="login-form" id="loginForm">
+          <label>
+            Username
+            <input id="username" autocomplete="username" placeholder="parent or child" required />
+          </label>
+          <label>
+            Password
+            <input id="password" type="password" autocomplete="current-password" placeholder="Enter password" required />
+          </label>
+          <button class="primary" type="submit">Log in</button>
+        </form>
+        <div class="credentials">
+          <div>
+            <strong>Parent login</strong>
+            <span>username: parent</span>
+            <span>password: parent123</span>
+          </div>
+          <div>
+            <strong>Child login</strong>
+            <span>username: child</span>
+            <span>password: child123</span>
+          </div>
+        </div>
+        <div class="alert-box hidden" id="loginError"></div>
+      </section>
+
+      <section class="dashboard hidden" id="childDashboard" aria-label="Child dashboard">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Child view</p>
+            <h2>Share, check in, or ask for help</h2>
+          </div>
+          <span class="status-pill">Logged in as child</span>
+        </div>
+
+        <section class="grid">
+          <article class="panel status-panel">
+            <div class="panel-title">
+              <div>
+                <p class="eyebrow">Location</p>
+                <h2>Shared location</h2>
+              </div>
+              <span class="status-pill" id="locationStatus">Not sharing</span>
+            </div>
+            <div class="map-card" aria-label="Location preview">
+              <div class="pulse" id="mapPulse"></div>
+              <div>
+                <p id="locationPrimary">Location is off</p>
+                <span id="locationSecondary">Tap share when you are ready.</span>
+              </div>
+            </div>
+            <div class="action-row">
+              <button class="primary" id="shareLocation">Share my location</button>
+              <button class="secondary" id="stopLocation" disabled>Stop sharing</button>
+            </div>
+          </article>
+
+          <article class="panel map-panel">
+            <div class="panel-title">
+              <div>
+                <p class="eyebrow">Map</p>
+                <h2>Current position</h2>
+              </div>
+              <a class="map-link disabled" id="childMapLink" href="#" target="_blank" rel="noreferrer">Open map</a>
+            </div>
+            <iframe id="childMap" title="Child shared location map"></iframe>
+            <p class="hint" id="childMapHint">The map appears after location is shared.</p>
+          </article>
+
+          <article class="panel sos-panel">
+            <div class="panel-title">
+              <div>
+                <p class="eyebrow">SOS</p>
+                <h2>Panic button</h2>
+              </div>
+              <span class="status-pill danger" id="sosStatus">Ready</span>
+            </div>
+            <button class="sos-button" id="sosButton" aria-label="Send SOS alert">SOS</button>
+            <p class="hint">Creates an alert message for trusted contacts with the latest shared location.</p>
+            <div class="alert-box hidden" id="sosMessage"></div>
+          </article>
+
+          <article class="panel checkin-panel">
+            <div class="panel-title">
+              <div>
+                <p class="eyebrow">Check-in</p>
+                <h2>Safety timer</h2>
+              </div>
+              <span class="status-pill" id="timerStatus">Idle</span>
+            </div>
+            <div class="timer" id="timerDisplay">00:00</div>
+            <div class="timer-controls">
+              <label>
+                Minutes
+                <input id="checkinMinutes" type="number" min="1" max="180" value="15" />
+              </label>
+              <button class="primary" id="startTimer">Start</button>
+              <button class="secondary" id="checkInNow" disabled>Check in</button>
+            </div>
+            <div class="alert-box hidden" id="missedCheckin"></div>
+          </article>
+
+          <article class="panel contacts-panel">
+            <div class="panel-title">
+              <div>
+                <p class="eyebrow">Trusted circle</p>
+                <h2>SOS contacts</h2>
+              </div>
+              <span class="status-pill contact-count">0 saved</span>
+            </div>
+            <form class="contact-form">
+              <label>
+                Name
+                <input class="contact-name" autocomplete="name" placeholder="Parent or guardian" required />
+              </label>
+              <label>
+                Phone or email
+                <input class="contact-route" placeholder="555-123-4567 or name@email.com" required />
+              </label>
+              <button class="primary" type="submit">Add contact</button>
+            </form>
+            <ul class="contact-list"></ul>
+          </article>
+        </section>
+      </section>
+
+      <section class="dashboard hidden" id="parentDashboard" aria-label="Parent dashboard">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Parent view</p>
+            <h2>Family safety overview</h2>
+          </div>
+          <span class="status-pill">Logged in as parent</span>
+        </div>
+
+        <section class="parent-board">
+          <div>
+            <p class="eyebrow">Latest safety summary</p>
+            <h2>Child status</h2>
+          </div>
+          <dl>
+            <div>
+              <dt>Location</dt>
+              <dd id="parentLocation">No shared location yet</dd>
+            </div>
+            <div>
+              <dt>Last check-in</dt>
+              <dd id="parentCheckin">No check-in yet</dd>
+            </div>
+            <div>
+              <dt>Alert state</dt>
+              <dd id="parentAlert">No active alerts</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="grid parent-grid">
+          <article class="panel map-panel large">
+            <div class="panel-title">
+              <div>
+                <p class="eyebrow">Map</p>
+                <h2>Shared child location</h2>
+              </div>
+              <a class="map-link disabled" id="parentMapLink" href="#" target="_blank" rel="noreferrer">Open map</a>
+            </div>
+            <iframe id="parentMap" title="Parent view shared child location map"></iframe>
+            <p class="hint" id="parentMapHint">Waiting for the child to share location.</p>
+          </article>
+
+          <article class="panel contacts-panel">
+            <div class="panel-title">
+              <div>
+                <p class="eyebrow">Trusted circle</p>
+                <h2>Contacts</h2>
+              </div>
+              <span class="status-pill contact-count">0 saved</span>
+            </div>
+            <form class="contact-form">
+              <label>
+                Name
+                <input class="contact-name" autocomplete="name" placeholder="Parent or guardian" required />
+              </label>
+              <label>
+                Phone or email
+                <input class="contact-route" placeholder="555-123-4567 or name@email.com" required />
+              </label>
+              <button class="primary" type="submit">Add contact</button>
+            </form>
+            <ul class="contact-list"></ul>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
