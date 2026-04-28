@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Tracelet Parent",
+    "slug": "tracelet-parent",
+    "scheme": "tracelet-parent",
+    "plugins": [
+      "expo-router",
+      "expo-notifications"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": ["fetch", "remote-notification"]
+      }
+    },
+    "android": {
+      "permissions": ["POST_NOTIFICATIONS"],
+      "package": "com.tracelet.parent"
+    },
+    "extra": {
+      "supabaseUrl": "",
+      "supabaseAnonKey": ""
+    }
+  }
+}

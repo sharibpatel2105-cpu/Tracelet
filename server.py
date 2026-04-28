@@ -26,6 +26,7 @@ DEFAULT_STATE = {
     "contacts": [{"name": "Emergency contact", "route": "9930679739"}],
     "lastCheckin": "",
     "activeAlert": "",
+    "isSharingLive": False,
 }
 
 

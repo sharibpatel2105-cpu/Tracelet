@@ -3,225 +3,473 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CircleSafe</title>
+    <title>Tracelet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="app-shell">
-      <section class="topbar" aria-label="App header">
-        <div>
-          <p class="eyebrow">Family safety</p>
-          <h1>CircleSafe</h1>
-        </div>
-        <button class="secondary hidden" id="logoutButton">Log out</button>
-      </section>
+    <div class="loading-screen" id="loadingScreen">
+      <div class="loading-core"></div>
+      <div class="loading-copy">
+        <p class="eyebrow">Tracelet intelligence</p>
+        <h1>Booting live safety mesh</h1>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+    </div>
 
-      <section class="notice">
-        <strong>Visible sharing only.</strong>
-        Child location sharing starts only after the child logs in, taps share, and grants browser permission.
-      </section>
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+    <div class="ambient ambient-c"></div>
 
-      <section class="login-panel" id="loginPanel">
-        <div>
-          <p class="eyebrow">Sign in</p>
-          <h2>Choose the right family view</h2>
-          <p class="login-copy">Demo accounts are included so you can test the child and parent experiences separately.</p>
-        </div>
-        <form class="login-form" id="loginForm">
-          <label>
-            Username
-            <input id="username" autocomplete="username" placeholder="parent or child" required />
-          </label>
-          <label>
-            Password
-            <input id="password" type="password" autocomplete="current-password" placeholder="Enter password" required />
-          </label>
-          <button class="primary" type="submit">Log in</button>
-        </form>
-        <div class="credentials">
-          <div>
-            <strong>Parent login</strong>
-            <span>username: parent</span>
-            <span>password: parent123</span>
-          </div>
-          <div>
-            <strong>Child login</strong>
-            <span>username: child</span>
-            <span>password: child123</span>
-          </div>
-        </div>
-        <div class="alert-box hidden" id="loginError"></div>
-      </section>
-
-      <section class="dashboard hidden" id="childDashboard" aria-label="Child dashboard">
-        <div class="section-header">
-          <div>
-            <p class="eyebrow">Child view</p>
-            <h2>Share, check in, or ask for help</h2>
-          </div>
-          <span class="status-pill">Logged in as child</span>
-        </div>
-
-        <section class="grid">
-          <article class="panel status-panel">
-            <div class="panel-title">
-              <div>
-                <p class="eyebrow">Location</p>
-                <h2>Shared location</h2>
-              </div>
-              <span class="status-pill" id="locationStatus">Not sharing</span>
-            </div>
-            <div class="map-card" aria-label="Location preview">
-              <div class="pulse" id="mapPulse"></div>
-              <div>
-                <p id="locationPrimary">Location is off</p>
-                <span id="locationSecondary">Tap share when you are ready.</span>
-              </div>
-            </div>
-            <div class="action-row">
-              <button class="primary" id="shareLocation">Share my location</button>
-              <button class="secondary" id="stopLocation" disabled>Stop sharing</button>
-            </div>
-          </article>
-
-          <article class="panel map-panel">
-            <div class="panel-title">
-              <div>
-                <p class="eyebrow">Map</p>
-                <h2>Current position</h2>
-              </div>
-              <a class="map-link disabled" id="childMapLink" href="#" target="_blank" rel="noreferrer">Open map</a>
-            </div>
-            <iframe id="childMap" title="Child shared location map"></iframe>
-            <p class="hint" id="childMapHint">The map appears after location is shared.</p>
-          </article>
-
-          <article class="panel sos-panel">
-            <div class="panel-title">
-              <div>
-                <p class="eyebrow">SOS</p>
-                <h2>Panic button</h2>
-              </div>
-              <span class="status-pill danger" id="sosStatus">Ready</span>
-            </div>
-            <button class="sos-button" id="sosButton" aria-label="Send SOS alert">SOS</button>
-            <p class="hint">Creates an alert message for trusted contacts with the latest shared location.</p>
-            <div class="alert-box hidden" id="sosMessage"></div>
-          </article>
-
-          <article class="panel checkin-panel">
-            <div class="panel-title">
-              <div>
-                <p class="eyebrow">Check-in</p>
-                <h2>Safety timer</h2>
-              </div>
-              <span class="status-pill" id="timerStatus">Idle</span>
-            </div>
-            <div class="timer" id="timerDisplay">00:00</div>
-            <div class="timer-controls">
-              <label>
-                Minutes
-                <input id="checkinMinutes" type="number" min="1" max="180" value="15" />
-              </label>
-              <button class="primary" id="startTimer">Start</button>
-              <button class="secondary" id="checkInNow" disabled>Check in</button>
-            </div>
-            <div class="alert-box hidden" id="missedCheckin"></div>
-          </article>
-
-          <article class="panel contacts-panel">
-            <div class="panel-title">
-              <div>
-                <p class="eyebrow">Trusted circle</p>
-                <h2>SOS contacts</h2>
-              </div>
-              <span class="status-pill contact-count">0 saved</span>
-            </div>
-            <form class="contact-form">
-              <label>
-                Name
-                <input class="contact-name" autocomplete="name" placeholder="Parent or guardian" required />
-              </label>
-              <label>
-                Phone or email
-                <input class="contact-route" placeholder="555-123-4567 or name@email.com" required />
-              </label>
-              <button class="primary" type="submit">Add contact</button>
-            </form>
-            <ul class="contact-list"></ul>
-          </article>
-        </section>
-      </section>
-
-      <section class="dashboard hidden" id="parentDashboard" aria-label="Parent dashboard">
-        <div class="section-header">
-          <div>
-            <p class="eyebrow">Parent view</p>
-            <h2>Family safety overview</h2>
-          </div>
-          <span class="status-pill">Logged in as parent</span>
-        </div>
-
-        <section class="parent-board">
-          <div>
-            <p class="eyebrow">Latest safety summary</p>
-            <h2>Child status</h2>
-          </div>
-          <dl>
+    <main class="shell">
+      <section class="main-surface">
+        <header class="topbar glass-shell" aria-label="App header">
+          <div class="brand-line">
+            <div class="brand-glyph">T</div>
             <div>
-              <dt>Location</dt>
-              <dd id="parentLocation">No shared location yet</dd>
+              <p class="eyebrow">Family safety command</p>
+              <h1>Tracelet</h1>
             </div>
-            <div>
-              <dt>Last check-in</dt>
-              <dd id="parentCheckin">No check-in yet</dd>
+          </div>
+
+          <div class="topbar-actions">
+            <div class="pill-chip">
+              <span class="chip-dot"></span>
+              <span id="globalPresence">Standby mesh</span>
             </div>
-            <div>
-              <dt>Alert state</dt>
-              <dd id="parentAlert">No active alerts</dd>
-            </div>
-          </dl>
+            <button class="secondary theme-toggle" id="themeToggle" type="button">Light mode</button>
+            <button class="secondary hidden" id="logoutButton" type="button">Log out</button>
+          </div>
+        </header>
+
+        <section class="notice glass-band">
+          <strong>Visible sharing only.</strong>
+          Child location sharing starts only after the child logs in, taps share, and grants browser permission.
         </section>
 
-        <section class="grid parent-grid">
-          <article class="panel map-panel large">
-            <div class="panel-title">
-              <div>
-                <p class="eyebrow">Map</p>
-                <h2>Shared child location</h2>
-              </div>
-              <a class="map-link disabled" id="parentMapLink" href="#" target="_blank" rel="noreferrer">Open map</a>
+        <section class="login-panel glass-card" id="loginPanel">
+          <div class="login-copy-wrap">
+            <div>
+              <p class="eyebrow">Sign in</p>
+              <h2>Choose the right family view</h2>
+              <p class="login-copy">Tracelet is designed as a premium, realtime safety surface for parents and children.</p>
             </div>
-            <iframe id="parentMap" title="Parent view shared child location map"></iframe>
-            <p class="hint" id="parentMapHint">Waiting for the child to share location.</p>
-          </article>
+            <div class="credentials">
+              <div>
+                <strong>Parent login</strong>
+                <span>email: your Supabase parent email</span>
+                <span>password: your Supabase parent password</span>
+              </div>
+              <div>
+                <strong>Child login</strong>
+                <span>email: your Supabase child email</span>
+                <span>password: your Supabase child password</span>
+              </div>
+            </div>
+          </div>
 
-          <article class="panel contacts-panel">
-            <div class="panel-title">
-              <div>
-                <p class="eyebrow">Trusted circle</p>
-                <h2>Contacts</h2>
-              </div>
-              <span class="status-pill contact-count">0 saved</span>
+          <form class="login-form" id="loginForm">
+            <label class="floating-field">
+              <span>Email</span>
+              <input id="username" autocomplete="username" placeholder="parent@example.com" required />
+            </label>
+            <label class="floating-field">
+              <span>Password</span>
+              <input id="password" type="password" autocomplete="current-password" placeholder="Enter password" required />
+            </label>
+            <button class="primary glow-button" type="submit">Open Tracelet</button>
+          </form>
+          <div class="alert-box hidden" id="loginError"></div>
+        </section>
+
+        <section class="dashboard hidden" id="childDashboard" aria-label="Child dashboard">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Child view</p>
+              <h2>Share, check in, or ask for help</h2>
             </div>
-            <form class="contact-form">
-              <label>
-                Name
-                <input class="contact-name" autocomplete="name" placeholder="Parent or guardian" required />
-              </label>
-              <label>
-                Phone or email
-                <input class="contact-route" placeholder="555-123-4567 or name@email.com" required />
-              </label>
-              <button class="primary" type="submit">Add contact</button>
-            </form>
-            <ul class="contact-list"></ul>
-          </article>
+            <span class="status-pill">Logged in as child</span>
+          </div>
+
+          <nav class="section-tabs" id="childTabs" aria-label="Child sections">
+            <button class="tab-button active" data-page-group="child" data-page="overview">Overview</button>
+            <button class="tab-button" data-page-group="child" data-page="map">Map &amp; Zone</button>
+            <button class="tab-button" data-page-group="child" data-page="safety">Safety</button>
+            <button class="tab-button" data-page-group="child" data-page="contacts">Contacts</button>
+          </nav>
+
+          <section class="section-page active" data-page-group="child" data-page="overview">
+            <section class="hero-grid">
+              <article class="hero-card glass-card">
+                <p class="eyebrow">Safety state</p>
+                <h3 id="childHeroState">Visible live sharing controls</h3>
+                <p id="childHeroText">Tracelet keeps family location sharing transparent and easy to pause.</p>
+              </article>
+              <article class="mini-stat glass-card">
+                <span class="metric-label">Live updates</span>
+                <strong id="childLiveMetric">0</strong>
+                <small>Signals streamed</small>
+              </article>
+              <article class="mini-stat glass-card">
+                <span class="metric-label">Safe zone</span>
+                <strong id="childFenceMetric">OFF</strong>
+                <small>Boundary mode</small>
+              </article>
+              <article class="mini-stat glass-card">
+                <span class="metric-label">Alert mode</span>
+                <strong id="childAlertMetric">Ready</strong>
+                <small>Rapid escalation</small>
+              </article>
+            </section>
+
+            <section class="live-banner glass-card" id="childLiveBanner">
+              <div>
+                <p class="eyebrow">Live sharing</p>
+                <h2 id="childLiveTitle">Location sharing is off</h2>
+              </div>
+              <p id="childLiveText">When you turn it on, the parent sees your latest shared location while this app stays open and permission remains granted.</p>
+            </section>
+
+            <section class="grid">
+              <article class="panel glass-card status-panel">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Location</p>
+                    <h2>Shared location</h2>
+                  </div>
+                  <span class="status-pill" id="locationStatus">Not sharing</span>
+                </div>
+                <div class="map-card" aria-label="Location preview">
+                  <div class="pulse" id="mapPulse"></div>
+                  <div>
+                    <p id="locationPrimary">Location is off</p>
+                    <span id="locationSecondary">Tap share when you are ready.</span>
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="primary glow-button" id="shareLocation">Share my location</button>
+                  <button class="secondary" id="stopLocation" disabled>Stop sharing</button>
+                </div>
+              </article>
+            </section>
+          </section>
+
+          <section class="section-page" data-page-group="child" data-page="map">
+            <section class="grid">
+              <article class="panel glass-card map-panel map-panel-wide">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Map</p>
+                    <h2>Current position</h2>
+                  </div>
+                  <a class="map-link disabled" id="childMapLink" href="#" target="_blank" rel="noreferrer">Open map</a>
+                </div>
+                <div class="map-stage" id="childMapCanvas" title="Child shared location map"></div>
+                <div class="coordinate-bar">
+                  <span id="childCoordinateText">Waiting for live coordinates</span>
+                  <span id="childZoneState">No geofence drawn</span>
+                </div>
+                <p class="hint" id="childMapHint">The map appears after location is shared.</p>
+              </article>
+
+              <article class="panel glass-card geofence-panel">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Geofence</p>
+                    <h2>Safe zone</h2>
+                  </div>
+                  <span class="status-pill" id="childGeofenceState">Not set</span>
+                </div>
+                <div class="metric-strip">
+                  <div>
+                    <span class="metric-label">Center</span>
+                    <strong id="childGeofenceCenter">Use current location</strong>
+                  </div>
+                  <div>
+                    <span class="metric-label">Radius</span>
+                    <strong id="childGeofenceRadiusLabel">250 m</strong>
+                  </div>
+                </div>
+                <div class="timer-controls" id="childGeofenceControls">
+                  <label class="floating-field">
+                    <span>Radius (meters)</span>
+                    <input id="geofenceRadius" type="number" min="50" max="5000" value="250" />
+                  </label>
+                  <button class="primary glow-button" id="setGeofence">Use current spot</button>
+                  <button class="secondary" id="clearGeofence">Clear</button>
+                </div>
+                <div class="metric-strip">
+                  <div>
+                    <span class="metric-label">Geofence mode</span>
+                    <strong id="childGeofenceShape">Circle</strong>
+                  </div>
+                  <div>
+                    <span class="metric-label">Coordinates</span>
+                    <strong id="childGeofenceCoordinates">Waiting for center</strong>
+                  </div>
+                </div>
+                <p class="hint" id="childGeofenceHint">Set a safe zone around the current shared location.</p>
+                <div class="alert-box hidden" id="childGeofenceAlert"></div>
+              </article>
+            </section>
+          </section>
+
+          <section class="section-page" data-page-group="child" data-page="safety">
+            <section class="grid">
+              <article class="panel glass-card sos-panel">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">SOS</p>
+                    <h2>Panic button</h2>
+                  </div>
+                  <span class="status-pill danger" id="sosStatus">Ready</span>
+                </div>
+                <button class="sos-button" id="sosButton" aria-label="Send SOS alert">SOS</button>
+                <p class="hint">Creates an alert message for trusted contacts with the latest shared location.</p>
+                <div class="alert-box hidden" id="sosMessage"></div>
+              </article>
+
+              <article class="panel glass-card checkin-panel">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Check-in</p>
+                    <h2>Safety timer</h2>
+                  </div>
+                  <span class="status-pill" id="timerStatus">Idle</span>
+                </div>
+                <div class="timer" id="timerDisplay">00:00</div>
+                <div class="timer-controls">
+                  <label class="floating-field">
+                    <span>Minutes</span>
+                    <input id="checkinMinutes" type="number" min="1" max="180" value="15" />
+                  </label>
+                  <button class="primary glow-button" id="startTimer">Start</button>
+                  <button class="secondary" id="checkInNow" disabled>Check in</button>
+                </div>
+                <div class="alert-box hidden" id="missedCheckin"></div>
+              </article>
+            </section>
+          </section>
+
+          <section class="section-page" data-page-group="child" data-page="contacts">
+            <article class="panel glass-card contacts-panel">
+              <div class="panel-title">
+                <div>
+                  <p class="eyebrow">Trusted circle</p>
+                  <h2>SOS contacts</h2>
+                </div>
+                <span class="status-pill contact-count">0 saved</span>
+              </div>
+              <form class="contact-form">
+                <label class="floating-field">
+                  <span>Name</span>
+                  <input class="contact-name" autocomplete="name" placeholder="Parent or guardian" required />
+                </label>
+                <label class="floating-field">
+                  <span>Phone or email</span>
+                  <input class="contact-route" placeholder="555-123-4567 or name@email.com" required />
+                </label>
+                <button class="primary glow-button" type="submit">Add contact</button>
+              </form>
+              <ul class="contact-list"></ul>
+            </article>
+          </section>
+        </section>
+
+        <section class="dashboard hidden" id="parentDashboard" aria-label="Parent dashboard">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Parent view</p>
+              <h2>Family safety overview</h2>
+            </div>
+            <span class="status-pill">Logged in as parent</span>
+          </div>
+
+          <nav class="section-tabs" id="parentTabs" aria-label="Parent sections">
+            <button class="tab-button active" data-page-group="parent" data-page="overview">Overview</button>
+            <button class="tab-button" data-page-group="parent" data-page="map">Map &amp; Zone</button>
+            <button class="tab-button" data-page-group="parent" data-page="alerts">Alerts &amp; AI</button>
+            <button class="tab-button" data-page-group="parent" data-page="contacts">Contacts</button>
+          </nav>
+
+          <section class="section-page active" data-page-group="parent" data-page="overview">
+            <section class="hero-grid parent-hero-grid">
+              <article class="hero-card glass-card">
+                <p class="eyebrow">Safety command</p>
+                <h3 id="parentHeroState">Realtime family awareness</h3>
+                <p id="parentHeroText">Tracelet correlates live movement, geofence state, and alerts into a single parent surface.</p>
+              </article>
+              <article class="mini-stat glass-card">
+                <span class="metric-label">Live status</span>
+                <strong id="parentLiveMetric">Idle</strong>
+                <small>Stream heartbeat</small>
+              </article>
+              <article class="mini-stat glass-card">
+                <span class="metric-label">Risk score</span>
+                <strong id="parentRiskMetric">18</strong>
+                <small>Dynamic model</small>
+              </article>
+              <article class="mini-stat glass-card">
+                <span class="metric-label">Alerts</span>
+                <strong id="parentAlertMetric">0</strong>
+                <small>Live queue</small>
+              </article>
+            </section>
+
+            <section class="live-banner parent-live-banner glass-card" id="parentLiveBanner">
+              <div>
+                <p class="eyebrow">Live status</p>
+                <h2 id="parentLiveTitle">Waiting for child location</h2>
+              </div>
+              <p id="parentLiveText">The parent view updates automatically when the child app is actively sharing location.</p>
+            </section>
+
+            <section class="parent-board glass-card">
+              <div>
+                <p class="eyebrow">Latest safety summary</p>
+                <h2>Child status</h2>
+              </div>
+              <dl>
+                <div>
+                  <dt>Location</dt>
+                  <dd id="parentLocation">No shared location yet</dd>
+                </div>
+                <div>
+                  <dt>Last check-in</dt>
+                  <dd id="parentCheckin">No check-in yet</dd>
+                </div>
+                <div>
+                  <dt>Alert state</dt>
+                  <dd id="parentAlert">No active alerts</dd>
+                </div>
+              </dl>
+            </section>
+          </section>
+
+          <section class="section-page" data-page-group="parent" data-page="map">
+            <section class="grid parent-grid parent-map-grid">
+              <article class="panel glass-card map-panel large parent-map-card">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Map</p>
+                    <h2>Shared child location</h2>
+                  </div>
+                  <a class="map-link disabled" id="parentMapLink" href="#" target="_blank" rel="noreferrer">Open map</a>
+                </div>
+                <div class="map-stage" id="parentMapCanvas" title="Parent view shared child location map"></div>
+                <div class="coordinate-bar">
+                  <span id="parentCoordinateText">Waiting for live coordinates</span>
+                  <span id="parentZoneState">Zone idle</span>
+                </div>
+                <div class="refresh-strip">
+                  <span class="metric-label">Update cadence</span>
+                  <div class="segmented-control" id="parentRefreshControl" aria-label="Parent map refresh cadence">
+                    <button class="segment-button active" type="button" data-refresh-seconds="0">Live</button>
+                    <button class="segment-button" type="button" data-refresh-seconds="15">15s</button>
+                    <button class="segment-button" type="button" data-refresh-seconds="30">30s</button>
+                    <button class="segment-button" type="button" data-refresh-seconds="60">60s</button>
+                  </div>
+                </div>
+                <p class="hint" id="parentMapHint">Waiting for the child to share location.</p>
+              </article>
+
+              <article class="panel glass-card geofence-panel">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Geofence designer</p>
+                    <h2>Draw or review safe zone</h2>
+                  </div>
+                  <span class="status-pill" id="parentGeofenceState">Not set</span>
+                </div>
+                <div class="metric-strip">
+                  <div>
+                    <span class="metric-label">Geometry</span>
+                    <strong id="parentGeofenceShape">None</strong>
+                  </div>
+                  <div>
+                    <span class="metric-label">Coordinates</span>
+                    <strong id="parentGeofenceCoordinates">Draw on map</strong>
+                  </div>
+                </div>
+                <div class="refresh-strip">
+                  <span class="metric-label">Drawing mode</span>
+                  <div class="segmented-control segmented-control-triple" id="parentGeofenceModeControl" aria-label="Parent geofence drawing mode">
+                    <button class="segment-button active" type="button" data-geofence-mode="circle">Circle</button>
+                    <button class="segment-button" type="button" data-geofence-mode="polygon">Polygon</button>
+                    <button class="segment-button" type="button" id="finishPolygonButton">Finish shape</button>
+                  </div>
+                </div>
+                <p class="hint left">
+                  Choose a drawing mode, then click on the parent map to place a circle or add polygon points. Existing shapes stay editable after they are saved.
+                </p>
+              </article>
+            </section>
+          </section>
+
+          <section class="section-page" data-page-group="parent" data-page="alerts">
+            <section class="grid parent-grid parent-alert-grid">
+              <article class="panel glass-card intelligence-panel">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Safety model</p>
+                    <h2>Live risk assessment</h2>
+                  </div>
+                  <span class="status-pill" id="riskPill">Low</span>
+                </div>
+                <div class="risk-score">
+                  <strong id="riskScore">18</strong>
+                  <span>/ 100</span>
+                </div>
+                <p class="hint left" id="riskSummary">Waiting for enough location activity to assess movement and boundary behavior.</p>
+                <ul class="signal-list" id="signalList"></ul>
+              </article>
+
+              <article class="panel glass-card alerts-panel">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Live alerts</p>
+                    <h2>Alert stream</h2>
+                  </div>
+                  <span class="status-pill" id="alertCount">0 events</span>
+                </div>
+                <ul class="alert-feed" id="alertFeed"></ul>
+              </article>
+            </section>
+          </section>
+
+          <section class="section-page" data-page-group="parent" data-page="contacts">
+            <article class="panel glass-card contacts-panel">
+              <div class="panel-title">
+                <div>
+                  <p class="eyebrow">Trusted circle</p>
+                  <h2>Contacts</h2>
+                </div>
+                <span class="status-pill contact-count">0 saved</span>
+              </div>
+              <form class="contact-form">
+                <label class="floating-field">
+                  <span>Name</span>
+                  <input class="contact-name" autocomplete="name" placeholder="Parent or guardian" required />
+                </label>
+                <label class="floating-field">
+                  <span>Phone or email</span>
+                  <input class="contact-route" placeholder="555-123-4567 or name@email.com" required />
+                </label>
+                <button class="primary glow-button" type="submit">Add contact</button>
+              </form>
+              <ul class="contact-list"></ul>
+            </article>
+          </section>
         </section>
       </section>
     </main>
 
     <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>

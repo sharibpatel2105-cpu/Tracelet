@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: circlesafe
+    name: tracelet
     runtime: python
     buildCommand: ""
     startCommand: python server.py
